@@ -1,9 +1,8 @@
-Initial Example Project
+Simple Lightbus Project
 =======================
 
-This example project contains two web servers, 
-neither of which contain any lightbus functionality.
-*We will build upon this project in subsequent examples.*
+This example project contains two web servers which 
+communicate via lightbus.
 
 The web servers are as follows:
 
