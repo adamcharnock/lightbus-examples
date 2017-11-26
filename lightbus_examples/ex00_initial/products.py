@@ -2,7 +2,7 @@
 A very simple web server for managing a companies products
 
 """
-from uuid import uuid4, UUID
+from uuid import uuid4
 
 from flask import Flask, request, redirect
 
@@ -15,32 +15,29 @@ products = {}
 
 @app.route('/create', methods=['POST'])
 def create_product():
-    products[uuid4()] = request.form.get('name') or 'No name'
+    products[uuid4().hex] = request.form.get('name') or 'No name'
     return redirect('/')
 
 
 @app.route('/delete/<uuid>', methods=['GET'])
 def delete_product(uuid):
-    uuid = UUID(hex=uuid)
     products.pop(uuid)
     return redirect('/')
 
 
 @app.route('/update/<uuid>', methods=['GET'])
 def update_product_form(uuid):
-    uuid = UUID(hex=uuid)
     return """
         <h1>Update: {name}</h1>
         <form method="post" action="/update/{uuid}">
             <input type="text" name="name" placeholder="Product name" value="{name}" required>
             <input type="submit" value="Update">
         </form>
-    """.format(uuid=uuid.hex, name=products[uuid])
+    """.format(uuid=uuid, name=products[uuid])
 
 
 @app.route('/update/<uuid>', methods=['POST'])
 def update_product(uuid):
-    uuid = UUID(hex=uuid)
     products[uuid] = request.form.get('name') or 'No name'
     return redirect('/')
 

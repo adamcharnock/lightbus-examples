@@ -2,11 +2,11 @@
 A very simple web server for managing the stock levels of a companies products
 
 """
-from uuid import uuid4, UUID
+from uuid import uuid4
 
 from flask import Flask, request, redirect
 
-initial_product_id = uuid4()
+initial_product_id = uuid4().hex
 
 # Store the stock levels & products in simple dicts indexed by product UUID.
 # This is simple, but we'll loose stock data upon restart.
@@ -22,7 +22,6 @@ app = Flask(__name__)
 
 @app.route('/set-stock/<product_uuid>', methods=['POST'])
 def set_stock(product_uuid):
-    product_uuid = UUID(hex=product_uuid)
     stock_levels[product_uuid] = int(request.form.get('quantity') or 0)
     return redirect('/')
 
