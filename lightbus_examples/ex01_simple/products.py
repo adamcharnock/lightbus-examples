@@ -12,6 +12,7 @@ app = Flask(__name__)
 # This is simple, but we'll loose products upon restart.
 products = {}
 
+
 @app.route('/create', methods=['POST'])
 def create_product():
     products[uuid4()] = request.form.get('name') or 'No name'
