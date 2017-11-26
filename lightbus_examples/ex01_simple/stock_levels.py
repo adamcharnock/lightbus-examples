@@ -2,9 +2,12 @@
 A very simple web server for managing the stock levels of a companies products
 
 """
-from uuid import uuid4, UUID
+import sys
+from uuid import uuid4
 
 from flask import Flask, request, redirect
+import lightbus
+from lightbus.utilities import configure_logging
 
 initial_product_id = uuid4()
 
@@ -17,12 +20,14 @@ products = {
     initial_product_id: "Demo initial product"
 }
 
+configure_logging()
+
 app = Flask(__name__)
+bus = lightbus.create()
 
 
 @app.route('/set-stock/<product_uuid>', methods=['POST'])
 def set_stock(product_uuid):
-    product_uuid = UUID(hex=product_uuid)
     stock_levels[product_uuid] = int(request.form.get('quantity') or 0)
     return redirect('/')
 
@@ -67,6 +72,14 @@ def list_stock():
     """.format(**locals())
 
 
-if __name__ == '__main__':
-    app.run(port=8002, debug=True)
+def handle_change(**kwargs):
+    global products
+    products = bus.products.all()
 
+
+if __name__ == '__main__':
+    if 'lightbus' in sys.argv:
+        bus.products.updated.listen(handle_change)
+        bus.run_forever()
+    else:
+        app.run(port=8002, debug=True)
