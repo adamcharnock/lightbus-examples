@@ -5,30 +5,30 @@ A very simple web server for managing the stock levels of a companies products
 import sys
 from uuid import uuid4
 
+import dataset
 from flask import Flask, request, redirect
 import lightbus
 from lightbus.utilities import configure_logging
 
 initial_product_id = uuid4()
 
-# Store the stock levels & products in simple dicts indexed by product UUID.
-# This is simple, but we'll loose stock data upon restart.
-stock_levels = {
-    initial_product_id: 5,
-}
-products = {
-    initial_product_id: "Demo initial product"
-}
+configure_logging()  # TODO: Sort out how we setup logging
 
-configure_logging()
-
+# Setup flask and lightbus
 app = Flask(__name__)
 bus = lightbus.create()
+
+# Create a simple database using the 'dataset' library
+db = dataset.connect('sqlite:///stock_app.sqlite', engine_kwargs=dict(connect_args=dict(check_same_thread=False)))
 
 
 @app.route('/set-stock/<product_uuid>', methods=['POST'])
 def set_stock(product_uuid):
-    stock_levels[product_uuid] = int(request.form.get('quantity') or 0)
+    # Insert/update the stock level in the database
+    db['stock'].upsert(dict(
+        uuid=product_uuid,
+        quantity=int(request.form.get('quantity') or 0)
+    ), keys=['uuid'])
     return redirect('/')
 
 
@@ -37,21 +37,21 @@ def list_stock():
 
     stock_list = []
 
-    for uuid in products.keys():
+    for product in db['products'].all():
+        stock_record = db['stock'].find_one(uuid=product['uuid'])
         stock_list.append("""
             <tr>
                 <td>{name}</td>
                 <td>
-                    <form method="post" action="/set-stock/{product_uuid}">
-                        <input type="number" name="quantity" value="{stock_level}" required>
+                    <form method="post" action="/set-stock/{uuid}">
+                        <input type="number" name="quantity" value="{stock}" required>
                         <input type="submit" value="Update">
                     </form>
                 </td>
             </tr>
             """.format(
-                name=products[uuid],
-                stock_level=stock_levels.get(uuid, 0),
-                product_uuid=uuid,
+                stock=stock_record['quantity'] if stock_record else 0,
+                **product,
             )
         )
 
@@ -72,14 +72,20 @@ def list_stock():
     """.format(**locals())
 
 
-def handle_change(**kwargs):
-    global products
-    products = bus.products.all()
+async def handle_change(**kwargs):
+    products = await bus.products.all.call_async()
+    db['products'].delete()
+    db['products'].insert_many(products)
 
 
 if __name__ == '__main__':
     if 'lightbus' in sys.argv:
+        bus.products.created.listen(handle_change)
         bus.products.updated.listen(handle_change)
+        bus.products.deleted.listen(handle_change)
+
         bus.run_forever()
     else:
+        if not db['products'].count():
+            db['products'].insert(dict(uuid=uuid4().hex, name='Example product'))
         app.run(port=8002, debug=True)
