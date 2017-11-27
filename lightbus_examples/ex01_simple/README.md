@@ -1,28 +1,47 @@
 Simple Lightbus Project
 =======================
 
-This example project contains two web servers which 
-communicate via lightbus.
+This example project contains two applications for 
+managing products (``products/``) and stock levels 
+(``stock/``).
 
-The web servers are as follows:
+Each application has two processes. The first is the web server 
+which provides the web interface. The second is the lightbus 
+process, which responds to remote procedure calls (RPCs) and 
+listens for events. This gives a total of four processes.
 
-* ``products.py`` — for managing your companies product catalog
-* ``stock_levels.py`` — for managing the stock level of each product
+Prerequisites
+-------------
 
-You should run both in separate terminal windows:
+You will need Redis 4.0 running locally.
+
+Running
+-------
+
+You should run each of the following in separate terminal windows:
     
 ```bash
-    # Run in terminal window 1:
-    $ python products.py
+    # Products web interface (run in terminal 1)
+    $ cd products/
+    $ FLASK_APP=web.py flask run --port=8001
+    
+    # Products bus (run in terminal 2)
+    $ cd products/
+    $ lightbus run
      
-    # Run in terminal window 2:
-    $ python stock_levels.py
+    # Stock management web interface (run in terminal 3)
+    $ cd stock/
+    $ FLASK_APP=web.py flask run --port=8002
+    
+    # Stock management web interface (run in terminal 4)
+    $ cd stock/
+    $ lightbus run
 ```
 
 The web servers will be available as follows:
 
 * http://127.0.0.1:8001 – Products
-* http://127.0.0.1:8002 – Stock levels
+* http://127.0.0.1:8002 – Stock management
 
 A Note on Implementation
 ------------------------

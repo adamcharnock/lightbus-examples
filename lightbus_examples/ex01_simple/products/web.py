@@ -2,37 +2,22 @@
 A very simple web server for managing a companies products
 
 """
-import sys
 from uuid import uuid4
 
-import dataset
 from flask import Flask, request, redirect
 import lightbus
-from lightbus.utilities import configure_logging
 
-configure_logging()  # TODO: Sort out how we setup logging
+from . import db
 
-# Setup flask and lightbus
-app = Flask(__name__)
+# Create a flask webserver
+web = Flask(__name__)
+
+# Create our bus
+from . import bus as bus_  # Importing the API will register it with Lightbus
 bus = lightbus.create()
 
-# Create a simple database using the 'dataset' library
-db = dataset.connect('sqlite:///products_app.sqlite', engine_kwargs=dict(connect_args=dict(check_same_thread=False)))
 
-
-class ProductsApi(lightbus.Api):
-    created = lightbus.Event(arguments=['name', 'uuid'])
-    updated = lightbus.Event(arguments=['name', 'uuid'])
-    deleted = lightbus.Event(arguments=['uuid'])
-
-    class Meta:
-        name = 'products'
-
-    def all(self):
-        return [dict(product) for product in db['products'].all()]
-
-
-@app.route('/create', methods=['POST'])
+@web.route('/create', methods=['POST'])
 def create_product():
     name = request.form.get('name') or 'No name'
     uuid = uuid4().hex
@@ -49,7 +34,7 @@ def create_product():
     return redirect('/')
 
 
-@app.route('/delete/<uuid>', methods=['GET'])
+@web.route('/delete/<uuid>', methods=['GET'])
 def delete_product(uuid):
     # Delete the product from our database
     db['products'].delete(dict(uuid=uuid))
@@ -60,18 +45,7 @@ def delete_product(uuid):
     return redirect('/')
 
 
-@app.route('/update/<uuid>', methods=['GET'])
-def update_product_form(uuid):
-    return """
-        <h1>Update: {name}</h1>
-        <form method="post" action="/update/{uuid}">
-            <input type="text" name="name" placeholder="Product name" value="{name}" required>
-            <input type="submit" value="Update">
-        </form>
-    """.format(uuid=uuid, name=products[uuid])
-
-
-@app.route('/update/<uuid>', methods=['POST'])
+@web.route('/update/<uuid>', methods=['POST'])
 def update_product(uuid):
     name = request.form.get('name') or 'No name'
 
@@ -87,7 +61,18 @@ def update_product(uuid):
     return redirect('/')
 
 
-@app.route('/', methods=['GET'])
+@web.route('/update/<uuid>', methods=['GET'])
+def update_product_form(uuid):
+    return """
+        <h1>Update: {name}</h1>
+        <form method="post" action="/update/{uuid}">
+            <input type="text" name="name" placeholder="Product name" value="{name}" required>
+            <input type="submit" value="Update">
+        </form>
+    """.format(**db['products'].find_one(uuid=uuid))
+
+
+@web.route('/', methods=['GET'])
 def list_products():
 
     product_list = [
@@ -116,11 +101,3 @@ def list_products():
         <h2>Create new product</h2>
         {form}
     """.format(**locals())
-
-
-if __name__ == '__main__':
-    if 'lightbus' in sys.argv:
-        bus.run_forever()
-    else:
-        app.run(port=8001, debug=True)
-
