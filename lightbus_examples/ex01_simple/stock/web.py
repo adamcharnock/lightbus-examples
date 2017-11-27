@@ -5,24 +5,20 @@ A very simple web server for managing the stock levels of a companies products
 import sys
 from uuid import uuid4
 
-import dataset
-from flask import Flask, request, redirect
 import lightbus
-from lightbus.utilities import configure_logging
+from flask import Flask, request, redirect
 
-initial_product_id = uuid4()
+from . import db
 
-configure_logging()  # TODO: Sort out how we setup logging
+# Create a flask webserver
+web = Flask(__name__)
 
-# Setup flask and lightbus
-app = Flask(__name__)
+# Create our bus
+from . import bus as bus_  # Importing the API will register it with Lightbus
 bus = lightbus.create()
 
-# Create a simple database using the 'dataset' library
-db = dataset.connect('sqlite:///stock_app.sqlite', engine_kwargs=dict(connect_args=dict(check_same_thread=False)))
 
-
-@app.route('/set-stock/<product_uuid>', methods=['POST'])
+@web.route('/set-stock/<product_uuid>', methods=['POST'])
 def set_stock(product_uuid):
     # Insert/update the stock level in the database
     db['stock'].upsert(dict(
@@ -32,7 +28,7 @@ def set_stock(product_uuid):
     return redirect('/')
 
 
-@app.route('/', methods=['GET'])
+@web.route('/', methods=['GET'])
 def list_stock():
 
     stock_list = []
@@ -70,22 +66,3 @@ def list_stock():
         {stock_list}
     </table>
     """.format(**locals())
-
-
-async def handle_change(**kwargs):
-    products = await bus.products.all.call_async()
-    db['products'].delete()
-    db['products'].insert_many(products)
-
-
-if __name__ == '__main__':
-    if 'lightbus' in sys.argv:
-        bus.products.created.listen(handle_change)
-        bus.products.updated.listen(handle_change)
-        bus.products.deleted.listen(handle_change)
-
-        bus.run_forever()
-    else:
-        if not db['products'].count():
-            db['products'].insert(dict(uuid=uuid4().hex, name='Example product'))
-        app.run(port=8002, debug=True)
