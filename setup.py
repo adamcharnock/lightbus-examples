@@ -15,6 +15,7 @@ setup(
     long_description=open('README.rst').read() if exists("README.rst") else "",
     install_requires=[
         'lightbus',
+        'dataset',
     ],
     include_package_data=True,
 )
