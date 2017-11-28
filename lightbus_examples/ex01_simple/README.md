@@ -21,7 +21,8 @@ This examples shows the following:
 Prerequisites
 -------------
 
-You will need Redis 4.0 running locally.
+You will need the [Redis 4.0 streams branch](https://github.com/antirez/redis/tree/streams) running 
+locally. The release of Redis 4.0 is anticipated by the end of 2017.
 
 Running
 -------
