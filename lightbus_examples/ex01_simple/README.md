@@ -1,6 +1,9 @@
 Simple Lightbus Project
 =======================
 
+![Products app screenshot](../../static/readme_images/ex01/products.png?raw=true) ![Stock app screenshot](../../static/readme_images/ex01/stock.png?raw=true)
+
+
 This example project contains two applications for 
 managing products (``products/``) and stock levels 
 (``stock/``).
@@ -59,3 +62,4 @@ A Note on Implementation
 The code in these examples is written to be concise, simple, and 
 readable. To these ends much has been sacrificed, including security.
 Don't look to these examples for web development best practices.
+
