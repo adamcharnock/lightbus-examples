@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Products</h1>
+
+    <h2>Create new product</h2>
+    <div class="row mb-4">
+        <form method="post" action="/create" class="col-md-6">
+            <div class="form-group">
+                <label for="name">Product name</label>
+                <input type="text" name="name" id="name" class="form-control" placeholder="Product name" required>
+            </div>
+            <input type="submit" class="btn btn-success" value="Create">
+        </form>
+    </div>
+
+    <h2>All products</h2>
+
+    <table class="table table-light">
+        <thread>
+            <tr>
+                <th>Product name</th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thread>
+        <tbody>
+        {% for product in products %}
+            <tr>
+                <td>{{  product.name }}</td>
+                <td><a href="/update/{{  product.uuid }}">Update</a></td>
+                <td><a href="/delete/{{  product.uuid }}">Delete</a></td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="3">No products, perhaps create one</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    </ul>
+
+{% endblock %}

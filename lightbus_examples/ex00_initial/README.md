@@ -14,16 +14,22 @@ You should run both in separate terminal windows:
     
 ```bash
     # Run in terminal window 1:
-    $ python products.py
+    $ cd products/
+    $ FLASK_APP=web.py flask run --port=8001
      
     # Run in terminal window 2:
-    $ python stock_levels.py
+    $ cd stock/
+    $ FLASK_APP=web.py flask run --port=8002
 ```
 
 The web servers will be available as follows:
 
 * http://127.0.0.1:8001 – Products
 * http://127.0.0.1:8002 – Stock levels
+
+Note that the stock app will not receive any products records 
+in this version of the app. This will come in ``ex01_simple``, 
+when we begin adding the lightbus functionality.
 
 A Note on Implementation
 ------------------------

@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Stock levels</h1>
+
+    <table class="table table-light">
+        <thread>
+            <tr>
+                <th>Product name</th>
+                <th>Stock level</th>
+            </tr>
+        </thread>
+        <tbody>
+        {% for product in products %}
+            <tr>
+                <td>{{ product.name }}</td>
+                <td>
+                    <form method="post" action="/set-stock/{{ product.uuid }}">
+                        <input type="number" name="quantity" value="{{ stock.find_one(uuid=product.uuid).quantity or 0 }}" required>
+                        <input type="submit" class="" value="Save">
+                    </form>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="2">No products, perhaps create in the product application.</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    </ul>
+
+{% endblock %}
