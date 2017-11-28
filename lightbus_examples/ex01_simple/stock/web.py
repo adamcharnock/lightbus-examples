@@ -32,6 +32,6 @@ def set_stock(product_uuid):
 @web.route('/', methods=['GET'])
 def list_stock():
     return render_template('list.html',
-                    products=db['products'],
-                    stock=db['stock'],
+                           products=db['products'],
+                           stock=db['stock'],
     )

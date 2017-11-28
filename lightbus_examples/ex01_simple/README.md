@@ -10,6 +10,16 @@ which provides the web interface. The second is the lightbus
 process, which responds to remote procedure calls (RPCs) and 
 listens for events. This gives a total of four processes.
 
+Content
+-------
+
+This examples shows the following:
+
+* How to define an API (``products/bus.py``)
+* How to fire events on an API (``products/web.py``)
+* How to listen for events on an API (``stock/bus.py``)
+* How to perform a remote procedure call on an API (``stock/bus.py``)
+
 Prerequisites
 -------------
 
