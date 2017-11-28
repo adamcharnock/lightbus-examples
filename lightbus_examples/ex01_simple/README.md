@@ -1,7 +1,9 @@
 Simple Lightbus Project
 =======================
 
-![Products app screenshot](../../static/readme_images/ex01/products.png?raw=true) ![Stock app screenshot](../../static/readme_images/ex01/stock.png?raw=true)
+Products app                                                                       |  Stock app
+:---------------------------------------------------------------------------------:|:-----------------------------------------------------------------------------:
+![Products app screenshot](../../static/readme_images/ex01/products.png?raw=true)  |  ![Stock app screenshot](../../static/readme_images/ex01/stock.png?raw=true)
 
 
 This example project contains two applications for 
