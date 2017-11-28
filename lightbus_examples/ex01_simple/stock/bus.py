@@ -18,7 +18,7 @@ async def handle_change(**kwargs):
     db['products'].insert_many(products)
 
 
-def before_server_start():
+def before_server_start(bus):
     """
     This before_server_start() hook is called before Lightbus
     begins serving requests.
