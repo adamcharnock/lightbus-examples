@@ -4,9 +4,8 @@ A very simple web server for managing a companies products
 """
 from uuid import uuid4
 
-from flask import Flask, request, redirect
+from flask import Flask, request, redirect, render_template
 import lightbus
-from flask.templating import render_template
 
 from . import db
 

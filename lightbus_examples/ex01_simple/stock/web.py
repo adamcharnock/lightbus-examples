@@ -2,12 +2,8 @@
 A very simple web server for managing the stock levels of a companies products
 
 """
-import sys
-from uuid import uuid4
-
 import lightbus
-from flask import Flask, request, redirect
-from flask.templating import render_template
+from flask import Flask, request, redirect, render_template
 
 from . import db
 
@@ -22,9 +18,10 @@ bus = lightbus.create()
 @web.route('/set-stock/<product_uuid>', methods=['POST'])
 def set_stock(product_uuid):
     # Insert/update the stock level in the database
+    quantity = request.form.get('quantity') or 0
     db['stock'].upsert(dict(
         uuid=product_uuid,
-        quantity=int(request.form.get('quantity') or 0)
+        quantity=int(quantity)
     ), keys=['uuid'])
     return redirect('/')
 
