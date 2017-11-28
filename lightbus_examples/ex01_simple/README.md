@@ -5,18 +5,11 @@ Products app                                                                    
 :---------------------------------------------------------------------------------:|:-----------------------------------------------------------------------------:
 ![Products app screenshot](../../static/readme_images/ex01/products.png?raw=true)  |  ![Stock app screenshot](../../static/readme_images/ex01/stock.png?raw=true)
 
-
-This example project contains two applications for 
-managing products (``products/``) and stock levels 
-(``stock/``).
-
-Each application has two processes. The first is the web server 
-which provides the web interface. The second is the lightbus 
-process, which responds to remote procedure calls (RPCs) and 
-listens for events. This gives a total of four processes.
-
 Content
 -------
+
+**This example shows how two simple applications can communicate via lightbus.**
+The stock application will receive product data from the products application.
 
 This examples shows the following:
 
@@ -32,6 +25,15 @@ You will need Redis 4.0 running locally.
 
 Running
 -------
+
+Each application has two processes. The first is the web server 
+which provides the web interface. The second is the lightbus 
+process, which responds to remote procedure calls (RPCs) and 
+listens for events. This gives a total of four processes.
+
+In the future we will look at ways of combining each application's
+web and lightbus processes into one via asyncio. However, for now 
+we will keep things simple.
 
 You should run each of the following in separate terminal windows:
     
@@ -57,6 +59,10 @@ The web servers will be available as follows:
 
 * http://127.0.0.1:8001 – Products
 * http://127.0.0.1:8002 – Stock management
+
+Your terminals will also look something like this:
+
+![Products app screenshot](../../static/readme_images/ex01/terminals.png?raw=true)
 
 A Note on Implementation
 ------------------------
