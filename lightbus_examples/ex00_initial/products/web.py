@@ -1,5 +1,5 @@
 """
-A very simple web server for managing a companies products
+A very simple web server for managing a company's products
 
 """
 from uuid import uuid4

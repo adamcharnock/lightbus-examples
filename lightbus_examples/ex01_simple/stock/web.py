@@ -1,5 +1,5 @@
 """
-A very simple web server for managing the stock levels of a companies products
+A very simple web server for managing the stock levels of a company's products
 
 """
 import lightbus

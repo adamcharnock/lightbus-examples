@@ -7,7 +7,7 @@ neither of which contain any lightbus functionality.
 
 The web servers are as follows:
 
-* ``products.py`` — for managing your companies product catalog
+* ``products.py`` — for managing your company's product catalog
 * ``stock_levels.py`` — for managing the stock level of each product
 
 You should run both in separate terminal windows:
